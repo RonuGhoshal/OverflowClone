@@ -1,0 +1,498 @@
+var _user$project$Repos$alertView = function (msg) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('error alert')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text(msg)
+			]));
+};
+var _user$project$Repos$loadingView = A2(
+	_elm_lang$html$Html$div,
+	_elm_lang$core$Native_List.fromArray(
+		[]),
+	_elm_lang$core$Native_List.fromArray(
+		[
+			_elm_lang$html$Html$text('loading...')
+		]));
+var _user$project$Repos$httpErrorToString = F2(
+	function (name, err) {
+		var _p0 = err;
+		switch (_p0.ctor) {
+			case 'Timeout':
+				return 'Timeout';
+			case 'NetworkError':
+				return 'Connection problem';
+			case 'UnexpectedPayload':
+				return 'That\'s weird. Something is broken!';
+			default:
+				var _p1 = _p0._0;
+				if (_p1 === 404) {
+					return A2(_elm_lang$core$Basics_ops['++'], name, 'not found:(');
+				} else {
+					return _p0._1;
+				}
+		}
+	});
+var _user$project$Repos$getUrl = function (name) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		'https://api.github.com/users/',
+		A2(_elm_lang$core$Basics_ops['++'], name, '/repos'));
+};
+var _user$project$Repos$sort = F2(
+	function (sortBy, repos) {
+		var _p2 = sortBy;
+		if (_p2.ctor === 'Name') {
+			return A2(
+				_elm_lang$core$List$sortBy,
+				function (_) {
+					return _.name;
+				},
+				repos);
+		} else {
+			return _elm_lang$core$List$reverse(
+				A2(
+					_elm_lang$core$List$sortBy,
+					function (_) {
+						return _.stargazersCount;
+					},
+					repos));
+		}
+	});
+var _user$project$Repos$isSelected = F2(
+	function (model, repo) {
+		return _elm_lang$core$Native_Utils.eq(model.selected, repo.id) ? true : false;
+	});
+var _user$project$Repos$Repo = F6(
+	function (a, b, c, d, e, f) {
+		return {id: a, name: b, htmlUrl: c, sshUrl: d, stargazersCount: e, avatarUrl: f};
+	});
+var _user$project$Repos$repoDecoder = A7(
+	_elm_lang$core$Json_Decode$object6,
+	_user$project$Repos$Repo,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'id', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'name', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'html_url', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'ssh_url', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'stargazers_count', _elm_lang$core$Json_Decode$int),
+	A2(
+		_elm_lang$core$Json_Decode$at,
+		_elm_lang$core$Native_List.fromArray(
+			['owner', 'avatar_url']),
+		_elm_lang$core$Json_Decode$string));
+var _user$project$Repos$reposDecoder = _elm_lang$core$Json_Decode$list(_user$project$Repos$repoDecoder);
+var _user$project$Repos$Model = F7(
+	function (a, b, c, d, e, f, g) {
+		return {userName: a, resultsFor: b, repos: c, isLoading: d, alert: e, selected: f, sortBy: g};
+	});
+var _user$project$Repos$Stars = {ctor: 'Stars'};
+var _user$project$Repos$Name = {ctor: 'Name'};
+var _user$project$Repos$initialModel = {
+	userName: 'turbomack',
+	resultsFor: 'turbomack',
+	repos: _elm_lang$core$Native_List.fromArray(
+		[]),
+	isLoading: true,
+	alert: '',
+	selected: -1,
+	sortBy: _user$project$Repos$Name
+};
+var _user$project$Repos$ChangeSort = function (a) {
+	return {ctor: 'ChangeSort', _0: a};
+};
+var _user$project$Repos$sortView = function (model) {
+	var isActive = function (attr) {
+		return _elm_lang$core$Native_Utils.eq(model.sortBy, attr);
+	};
+	var classNames = function (attr) {
+		return isActive(attr) ? 'active' : 'inactive';
+	};
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('sort-filter')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class(
+						classNames(_user$project$Repos$Name)),
+						_elm_lang$html$Html_Events$onClick(
+						_user$project$Repos$ChangeSort(_user$project$Repos$Name))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('name')
+					])),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class(
+						classNames(_user$project$Repos$Stars)),
+						_elm_lang$html$Html_Events$onClick(
+						_user$project$Repos$ChangeSort(_user$project$Repos$Stars))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('stars')
+					]))
+			]));
+};
+var _user$project$Repos$SelectRepo = function (a) {
+	return {ctor: 'SelectRepo', _0: a};
+};
+var _user$project$Repos$repoView = F2(
+	function (model, repo) {
+		var cloneValue = A2(_elm_lang$core$Basics_ops['++'], 'git clone ', repo.sshUrl);
+		var classNames = A2(_user$project$Repos$isSelected, model, repo) ? 'repo selected' : 'repo';
+		return A2(
+			_elm_lang$html$Html$li,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class(classNames)
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('repo-main'),
+							_elm_lang$html$Html_Events$onClick(
+							_user$project$Repos$SelectRepo(repo))
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(
+							_elm_lang$html$Html$img,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html_Attributes$src(repo.avatarUrl),
+									_elm_lang$html$Html_Attributes$class('avatar')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[])),
+							A2(
+							_elm_lang$html$Html$div,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html_Attributes$class('repo-info')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									A2(
+									_elm_lang$html$Html$span,
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html_Attributes$class('stars-count')
+										]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html$text(
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												'stars: ',
+												_elm_lang$core$Basics$toString(repo.stargazersCount)))
+										])),
+									A2(
+									_elm_lang$html$Html$h2,
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html_Attributes$class('repo-name')
+										]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											A2(
+											_elm_lang$html$Html$a,
+											_elm_lang$core$Native_List.fromArray(
+												[
+													_elm_lang$html$Html_Attributes$href(repo.htmlUrl),
+													_elm_lang$html$Html_Attributes$target('_blank')
+												]),
+											_elm_lang$core$Native_List.fromArray(
+												[
+													_elm_lang$html$Html$text(repo.name)
+												]))
+										]))
+								]))
+						])),
+					A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('repo-details')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(
+							_elm_lang$html$Html$div,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html_Attributes$class('clone')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									A2(
+									_elm_lang$html$Html$label,
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html_Attributes$class('clone-label')
+										]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html$text('clone:'),
+											A2(
+											_elm_lang$html$Html$input,
+											_elm_lang$core$Native_List.fromArray(
+												[
+													_elm_lang$html$Html_Attributes$class('clone-input'),
+													_elm_lang$html$Html_Attributes$disabled(true),
+													_elm_lang$html$Html_Attributes$value(cloneValue)
+												]),
+											_elm_lang$core$Native_List.fromArray(
+												[]))
+										]))
+								]))
+						]))
+				]));
+	});
+var _user$project$Repos$reposListView = function (model) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('repos-list')
+			]),
+		A2(
+			_elm_lang$core$List$map,
+			_user$project$Repos$repoView(model),
+			A2(_user$project$Repos$sort, model.sortBy, model.repos)));
+};
+var _user$project$Repos$NameChanged = function (a) {
+	return {ctor: 'NameChanged', _0: a};
+};
+var _user$project$Repos$FetchFail = function (a) {
+	return {ctor: 'FetchFail', _0: a};
+};
+var _user$project$Repos$FetchDone = function (a) {
+	return {ctor: 'FetchDone', _0: a};
+};
+var _user$project$Repos$fetchData = function (name) {
+	var url = _user$project$Repos$getUrl(name);
+	return A3(
+		_elm_lang$core$Task$perform,
+		_user$project$Repos$FetchFail,
+		_user$project$Repos$FetchDone,
+		A2(_evancz$elm_http$Http$get, _user$project$Repos$reposDecoder, url));
+};
+var _user$project$Repos$init = {
+	ctor: '_Tuple2',
+	_0: _user$project$Repos$initialModel,
+	_1: _user$project$Repos$fetchData(_user$project$Repos$initialModel.userName)
+};
+var _user$project$Repos$update = F2(
+	function (message, model) {
+		var _p3 = message;
+		switch (_p3.ctor) {
+			case 'NoOp':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'FetchData':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{isLoading: true, resultsFor: model.userName}),
+					_1: _user$project$Repos$fetchData(model.userName)
+				};
+			case 'FetchDone':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{repos: _p3._0, isLoading: false, alert: ''}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'FetchFail':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							repos: _elm_lang$core$Native_List.fromArray(
+								[]),
+							isLoading: false,
+							alert: A2(_user$project$Repos$httpErrorToString, model.userName, _p3._0)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'NameChanged':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{userName: _p3._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'SelectRepo':
+				var _p4 = _p3._0;
+				var value = _elm_lang$core$Native_Utils.eq(_p4.id, model.selected) ? -1 : _p4.id;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{selected: value}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{sortBy: _p3._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+var _user$project$Repos$FetchData = function (a) {
+	return {ctor: 'FetchData', _0: a};
+};
+var _user$project$Repos$headerView = function (model) {
+	return A2(
+		_elm_lang$html$Html$header,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('header')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$img,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$src('assets/octocat.png'),
+						_elm_lang$html$Html_Attributes$class('octo-cat')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$h1,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('headline')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Repos')
+					])),
+				A2(
+				_elm_lang$html$Html$form,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onSubmit(
+						_user$project$Repos$FetchData(model.userName)),
+						_elm_lang$html$Html_Attributes$class('search-form')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$span,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('hint')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('github.com/')
+							])),
+						A2(
+						_elm_lang$html$Html$input,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$value(model.userName),
+								_elm_lang$html$Html_Events$onInput(_user$project$Repos$NameChanged)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[])),
+						A2(
+						_elm_lang$html$Html$button,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$type$('submit'),
+								_elm_lang$html$Html_Attributes$class('submit-btn')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Go')
+							]))
+					]))
+			]));
+};
+var _user$project$Repos$view = function (model) {
+	var content = model.isLoading ? _user$project$Repos$loadingView : _user$project$Repos$reposListView(model);
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$a,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$href('https://github.com/turboMaCk/elm-github-repos'),
+						_elm_lang$html$Html_Attributes$class('fork-link')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Fork me on Github')
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('app-container')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_user$project$Repos$headerView(model),
+						_user$project$Repos$sortView(model),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('results-for')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'Results for `',
+									A2(_elm_lang$core$Basics_ops['++'], model.resultsFor, '`:')))
+							])),
+						_user$project$Repos$alertView(model.alert),
+						content
+					]))
+			]));
+};
+var _user$project$Repos$main = {
+	main: _elm_lang$html$Html_App$program(
+		{
+			init: _user$project$Repos$init,
+			update: _user$project$Repos$update,
+			view: _user$project$Repos$view,
+			subscriptions: function (_p5) {
+				return _elm_lang$core$Platform_Sub$none;
+			}
+		})
+};
+var _user$project$Repos$NoOp = {ctor: 'NoOp'};

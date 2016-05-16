@@ -1,0 +1,111 @@
+var _user$project$Questions$questionView = F2(
+	function (model, question) {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$h3,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text(question.title)
+						])),
+					A2(
+					_elm_lang$html$Html$h5,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text(question.content)
+						]))
+				]));
+	});
+var _user$project$Questions$questionsListView = function (model) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		A2(
+			_elm_lang$core$List$map,
+			_user$project$Questions$questionView(model),
+			model.questions));
+};
+var _user$project$Questions$initialModel = {
+	questions: _elm_lang$core$Native_List.fromArray(
+		[])
+};
+var _user$project$Questions$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Questions$questionsListView(_user$project$Questions$initialModel)
+			]));
+};
+var _user$project$Questions$Question = F2(
+	function (a, b) {
+		return {title: a, content: b};
+	});
+var _user$project$Questions$questionDecoder = A3(
+	_elm_lang$core$Json_Decode$object2,
+	_user$project$Questions$Question,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'title', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'content', _elm_lang$core$Json_Decode$string));
+var _user$project$Questions$questionsDecoder = _elm_lang$core$Json_Decode$list(_user$project$Questions$questionDecoder);
+var _user$project$Questions$Model = function (a) {
+	return {questions: a};
+};
+var _user$project$Questions$FetchFail = function (a) {
+	return {ctor: 'FetchFail', _0: a};
+};
+var _user$project$Questions$FetchDone = function (a) {
+	return {ctor: 'FetchDone', _0: a};
+};
+var _user$project$Questions$fetchData = function () {
+	var url = 'http://localhost:3000/api/questions';
+	return A3(
+		_elm_lang$core$Task$perform,
+		_user$project$Questions$FetchFail,
+		_user$project$Questions$FetchDone,
+		A2(_evancz$elm_http$Http$get, _user$project$Questions$questionsDecoder, url));
+}();
+var _user$project$Questions$init = {ctor: '_Tuple2', _0: _user$project$Questions$initialModel, _1: _user$project$Questions$fetchData};
+var _user$project$Questions$update = F2(
+	function (message, model) {
+		var _p0 = message;
+		switch (_p0.ctor) {
+			case 'NoOp':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'FetchData':
+				return {ctor: '_Tuple2', _0: model, _1: _user$project$Questions$fetchData};
+			case 'FetchDone':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{questions: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		}
+	});
+var _user$project$Questions$main = {
+	main: _elm_lang$html$Html_App$program(
+		{
+			init: _user$project$Questions$init,
+			update: _user$project$Questions$update,
+			view: _user$project$Questions$view,
+			subscriptions: function (_p1) {
+				return _elm_lang$core$Platform_Sub$none;
+			}
+		})
+};
+var _user$project$Questions$FetchData = {ctor: 'FetchData'};
+var _user$project$Questions$NoOp = {ctor: 'NoOp'};

@@ -1,0 +1,59 @@
+var _user$project$Main$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		if (_p0.ctor === 'NoOp') {
+			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		} else {
+			return {ctor: '_Tuple2', _0: _p0._0, _1: _elm_lang$core$Platform_Cmd$none};
+		}
+	});
+var _user$project$Main$init = {
+	ctor: '_Tuple2',
+	_0: _elm_lang$core$Native_List.fromArray(
+		[]),
+	_1: _elm_lang$core$Platform_Cmd$none
+};
+var _user$project$Main$Question = F7(
+	function (a, b, c, d, e, f, g) {
+		return {id: a, title: b, content: c, best_answer_id: d, user_id: e, created_at: f, updated_at: g};
+	});
+var _user$project$Main$question = A8(
+	_elm_lang$core$Json_Decode$object7,
+	_user$project$Main$Question,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'id', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'title', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'content', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'best_answer_id', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'user_id', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'created_at', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'updated_at', _elm_lang$core$Json_Decode$string));
+var _user$project$Main$getQuestions = A2(
+	_evancz$elm_http$Http$get,
+	_elm_lang$core$Json_Decode$list(_user$project$Main$question),
+	'http://localhost:3000/api/questions');
+var _user$project$Main$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text(
+				_elm_lang$core$Basics$toString(_user$project$Main$getQuestions))
+			]));
+};
+var _user$project$Main$main = {
+	main: _elm_lang$html$Html_App$program(
+		{
+			init: _user$project$Main$init,
+			update: _user$project$Main$update,
+			view: _user$project$Main$view,
+			subscriptions: function (_p1) {
+				return _elm_lang$core$Platform_Sub$none;
+			}
+		})
+};
+var _user$project$Main$SetQuestions = function (a) {
+	return {ctor: 'SetQuestions', _0: a};
+};
+var _user$project$Main$NoOp = {ctor: 'NoOp'};
