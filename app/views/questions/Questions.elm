@@ -8,6 +8,7 @@ import Html.Events as Events
 import Http
 import Json.Decode as Json exposing ((:=))
 import Task exposing (..)
+import Debug
 
 main : Program Never
 main =
@@ -65,8 +66,8 @@ type Msg = NoOp
     | FetchFail Http.Error
 
 update : Msg -> Model -> (Model, Cmd Msg)
-update message model =
-  case message of
+update msg model =
+  case msg of
     NoOp ->
       ( model, Cmd.none )
     FetchData ->
@@ -77,13 +78,15 @@ update message model =
     FetchFail error ->
       ( model, Cmd.none )
 
+
+
 -- VIEW
 
 questionView : Model -> Question -> Html Msg
 questionView model question =
   div [ ]
-    [ h3 [  ] [text question.title],
-      h5 [  ] [text question.content]
+    [ h3 [  ] [text question.title]
+    , h5 [  ] [text question.content]
     ]
 
 questionsListView : Model -> Html Msg
@@ -93,5 +96,8 @@ questionsListView model =
 
 view : Model -> Html Msg
 view model =
-  div [ ] [ questionsListView initialModel]
+    div [ ]
+    [ h1 [  ] [text "SLACK OVERFLOW"]
+    , questionsListView model
+    ]
 
