@@ -34,10 +34,6 @@ var _user$project$Questions$questionsListView = function (model) {
 			_user$project$Questions$questionView(model),
 			model.questions));
 };
-var _user$project$Questions$initialModel = {
-	questions: _elm_lang$core$Native_List.fromArray(
-		[])
-};
 var _user$project$Questions$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -45,8 +41,20 @@ var _user$project$Questions$view = function (model) {
 			[]),
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_user$project$Questions$questionsListView(_user$project$Questions$initialModel)
+				A2(
+				_elm_lang$html$Html$h1,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('SLACK OVERFLOW')
+					])),
+				_user$project$Questions$questionsListView(model)
 			]));
+};
+var _user$project$Questions$initialModel = {
+	questions: _elm_lang$core$Native_List.fromArray(
+		[])
 };
 var _user$project$Questions$Question = F2(
 	function (a, b) {
@@ -77,8 +85,8 @@ var _user$project$Questions$fetchData = function () {
 }();
 var _user$project$Questions$init = {ctor: '_Tuple2', _0: _user$project$Questions$initialModel, _1: _user$project$Questions$fetchData};
 var _user$project$Questions$update = F2(
-	function (message, model) {
-		var _p0 = message;
+	function (msg, model) {
+		var _p0 = msg;
 		switch (_p0.ctor) {
 			case 'NoOp':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
