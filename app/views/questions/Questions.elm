@@ -97,7 +97,6 @@ type Msg = NoOp
     | FetchDone (List Question)
     | FetchFail Http.Error
 
-
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
@@ -112,20 +111,22 @@ update msg model =
       ( model, Cmd.none )
 
 
-
 -- VIEW
 
 questionView : Model -> Question -> Html Msg
 questionView model question =
-  div [ ]
+  div [ id ("question" ++ (toString question.id)) ]
     [ h3 [  ] [text question.title]
     , h5 [  ] [text question.content]
     , div [  ][span [ ] [text ((toString (List.length question.votes)) ++ " votes ")],
                  a [ href ("http://localhost:3000/api/questions/" ++ toString (question.id) ++ "/votes")] [text "(Upvote)" ]
                 ]
-    , div [  ][a [href "#"] [text ((toString (List.length question.answers)) ++ " answers")]]
+    , div [ ][ span [ ][text ((toString (List.length question.answers)) ++ " answers ")]
+    ]
     , answerListView question
     ]
+
+
 
 questionsListView : Model -> Html Msg
 questionsListView model =
@@ -140,7 +141,7 @@ answerView question answer =
 
 answerListView : Question -> Html Msg
 answerListView question =
-  ul [  ]
+  ul [ id ("answers" ++ (toString question.id)), style [("display", "none")] ]
     (question.answers |> List.map (answerView question))
 
 view : Model -> Html Msg

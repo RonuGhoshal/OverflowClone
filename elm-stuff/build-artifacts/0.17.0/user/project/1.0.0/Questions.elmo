@@ -20,7 +20,18 @@ var _user$project$Questions$answerListView = function (question) {
 	return A2(
 		_elm_lang$html$Html$ul,
 		_elm_lang$core$Native_List.fromArray(
-			[]),
+			[
+				_elm_lang$html$Html_Attributes$id(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'answers',
+					_elm_lang$core$Basics$toString(question.id))),
+				_elm_lang$html$Html_Attributes$style(
+				_elm_lang$core$Native_List.fromArray(
+					[
+						{ctor: '_Tuple2', _0: 'display', _1: 'none'}
+					]))
+			]),
 		A2(
 			_elm_lang$core$List$map,
 			_user$project$Questions$answerView(question),
@@ -31,7 +42,13 @@ var _user$project$Questions$questionView = F2(
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
-				[]),
+				[
+					_elm_lang$html$Html_Attributes$id(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'question',
+						_elm_lang$core$Basics$toString(question.id)))
+				]),
 			_elm_lang$core$Native_List.fromArray(
 				[
 					A2(
@@ -94,11 +111,9 @@ var _user$project$Questions$questionView = F2(
 					_elm_lang$core$Native_List.fromArray(
 						[
 							A2(
-							_elm_lang$html$Html$a,
+							_elm_lang$html$Html$span,
 							_elm_lang$core$Native_List.fromArray(
-								[
-									_elm_lang$html$Html_Attributes$href('#')
-								]),
+								[]),
 							_elm_lang$core$Native_List.fromArray(
 								[
 									_elm_lang$html$Html$text(
@@ -106,7 +121,7 @@ var _user$project$Questions$questionView = F2(
 										_elm_lang$core$Basics_ops['++'],
 										_elm_lang$core$Basics$toString(
 											_elm_lang$core$List$length(question.answers)),
-										' answers'))
+										' answers '))
 								]))
 						])),
 					_user$project$Questions$answerListView(question)
