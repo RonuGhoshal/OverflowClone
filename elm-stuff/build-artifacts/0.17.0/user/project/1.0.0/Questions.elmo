@@ -1,9 +1,54 @@
+var _user$project$Questions$answerView = F2(
+	function (question, answer) {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$h5,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text(answer.content)
+						]))
+				]));
+	});
+var _user$project$Questions$answerListView = function (question) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$id(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'answers',
+					_elm_lang$core$Basics$toString(question.id))),
+				_elm_lang$html$Html_Attributes$style(
+				_elm_lang$core$Native_List.fromArray(
+					[
+						{ctor: '_Tuple2', _0: 'display', _1: 'none'}
+					]))
+			]),
+		A2(
+			_elm_lang$core$List$map,
+			_user$project$Questions$answerView(question),
+			question.answers));
+};
 var _user$project$Questions$questionView = F2(
 	function (model, question) {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
-				[]),
+				[
+					_elm_lang$html$Html_Attributes$id(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'question',
+						_elm_lang$core$Basics$toString(question.id)))
+				]),
 			_elm_lang$core$Native_List.fromArray(
 				[
 					A2(
@@ -21,7 +66,65 @@ var _user$project$Questions$questionView = F2(
 					_elm_lang$core$Native_List.fromArray(
 						[
 							_elm_lang$html$Html$text(question.content)
-						]))
+						])),
+					A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(
+							_elm_lang$html$Html$span,
+							_elm_lang$core$Native_List.fromArray(
+								[]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html$text(
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										_elm_lang$core$Basics$toString(
+											_elm_lang$core$List$length(question.votes)),
+										' votes '))
+								])),
+							A2(
+							_elm_lang$html$Html$a,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html_Attributes$href(
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										'http://localhost:3000/api/questions/',
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											_elm_lang$core$Basics$toString(question.id),
+											'/votes')))
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html$text('(Upvote)')
+								]))
+						])),
+					A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(
+							_elm_lang$html$Html$span,
+							_elm_lang$core$Native_List.fromArray(
+								[]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html$text(
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										_elm_lang$core$Basics$toString(
+											_elm_lang$core$List$length(question.answers)),
+										' answers '))
+								]))
+						])),
+					_user$project$Questions$answerListView(question)
 				]));
 	});
 var _user$project$Questions$questionsListView = function (model) {
@@ -56,15 +159,40 @@ var _user$project$Questions$initialModel = {
 	questions: _elm_lang$core$Native_List.fromArray(
 		[])
 };
-var _user$project$Questions$Question = F2(
+var _user$project$Questions$Vote = function (a) {
+	return {id: a};
+};
+var _user$project$Questions$voteDecoder = A2(
+	_elm_lang$core$Json_Decode$object1,
+	_user$project$Questions$Vote,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'id', _elm_lang$core$Json_Decode$int));
+var _user$project$Questions$Answer = F2(
 	function (a, b) {
-		return {title: a, content: b};
+		return {id: a, content: b};
 	});
-var _user$project$Questions$questionDecoder = A3(
+var _user$project$Questions$answerDecoder = A3(
 	_elm_lang$core$Json_Decode$object2,
-	_user$project$Questions$Question,
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'title', _elm_lang$core$Json_Decode$string),
+	_user$project$Questions$Answer,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'id', _elm_lang$core$Json_Decode$int),
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'content', _elm_lang$core$Json_Decode$string));
+var _user$project$Questions$Question = F5(
+	function (a, b, c, d, e) {
+		return {id: a, title: b, content: c, votes: d, answers: e};
+	});
+var _user$project$Questions$questionDecoder = A6(
+	_elm_lang$core$Json_Decode$object5,
+	_user$project$Questions$Question,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'id', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'title', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'content', _elm_lang$core$Json_Decode$string),
+	A2(
+		_elm_lang$core$Json_Decode_ops[':='],
+		'votes',
+		_elm_lang$core$Json_Decode$list(_user$project$Questions$voteDecoder)),
+	A2(
+		_elm_lang$core$Json_Decode_ops[':='],
+		'answers',
+		_elm_lang$core$Json_Decode$list(_user$project$Questions$answerDecoder)));
 var _user$project$Questions$questionsDecoder = _elm_lang$core$Json_Decode$list(_user$project$Questions$questionDecoder);
 var _user$project$Questions$Model = function (a) {
 	return {questions: a};
