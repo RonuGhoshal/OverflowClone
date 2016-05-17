@@ -30,7 +30,8 @@ type alias Answer =
   }
 
 type alias Question =
-  { title : String
+  { id : Int
+  , title : String
   , content : String
   , votes : List Vote
   , answers : List Answer
@@ -51,8 +52,9 @@ questionsDecoder =
 
 questionDecoder : Json.Decoder Question
 questionDecoder =
-  Json.object4
+  Json.object5
         Question
+          ("id" := Json.int)
           ("title" := Json.string)
           ("content" := Json.string)
           ("votes" := Json.list voteDecoder)
@@ -78,6 +80,9 @@ fetchData =
   in
     Task.perform FetchFail FetchDone (Http.get questionsDecoder url)
 
+
+
+
 --INIT
 
 init : ( Model, Cmd Msg )
@@ -92,6 +97,7 @@ type Msg = NoOp
     | FetchDone (List Question)
     | FetchFail Http.Error
 
+
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
@@ -105,6 +111,8 @@ update msg model =
     FetchFail error ->
       ( model, Cmd.none )
 
+
+
 -- VIEW
 
 questionView : Model -> Question -> Html Msg
@@ -113,7 +121,7 @@ questionView model question =
     [ h3 [  ] [text question.title]
     , h5 [  ] [text question.content]
     , div [  ][span [ ] [text ((toString (List.length question.votes)) ++ " votes ")],
-                 a [ href "#" ] [text "(Upvote)" ]
+                 a [ href ("http://localhost:3000/api/questions/" ++ toString (question.id) ++ "/votes")] [text "(Upvote)" ]
                 ]
     , div [  ][a [href "#"] [text ((toString (List.length question.answers)) ++ " answers")]]
     , answerListView question

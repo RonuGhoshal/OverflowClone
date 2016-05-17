@@ -73,7 +73,14 @@ var _user$project$Questions$questionView = F2(
 							_elm_lang$html$Html$a,
 							_elm_lang$core$Native_List.fromArray(
 								[
-									_elm_lang$html$Html_Attributes$href('#')
+									_elm_lang$html$Html_Attributes$href(
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										'http://localhost:3000/api/questions/',
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											_elm_lang$core$Basics$toString(question.id),
+											'/votes')))
 								]),
 							_elm_lang$core$Native_List.fromArray(
 								[
@@ -153,13 +160,14 @@ var _user$project$Questions$answerDecoder = A3(
 	_user$project$Questions$Answer,
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'id', _elm_lang$core$Json_Decode$int),
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'content', _elm_lang$core$Json_Decode$string));
-var _user$project$Questions$Question = F4(
-	function (a, b, c, d) {
-		return {title: a, content: b, votes: c, answers: d};
+var _user$project$Questions$Question = F5(
+	function (a, b, c, d, e) {
+		return {id: a, title: b, content: c, votes: d, answers: e};
 	});
-var _user$project$Questions$questionDecoder = A5(
-	_elm_lang$core$Json_Decode$object4,
+var _user$project$Questions$questionDecoder = A6(
+	_elm_lang$core$Json_Decode$object5,
 	_user$project$Questions$Question,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'id', _elm_lang$core$Json_Decode$int),
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'title', _elm_lang$core$Json_Decode$string),
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'content', _elm_lang$core$Json_Decode$string),
 	A2(
